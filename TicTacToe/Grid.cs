@@ -13,6 +13,7 @@ namespace TicTacToe
 
         public Grid()
         {
+            // Initialize gridArray
             for (int x = 0; x < 3; x++)
             {
                 for (int y = 0; y < 3; y++)
@@ -24,6 +25,7 @@ namespace TicTacToe
 
         public bool setSpot(Spot spot, Pieces piece)
         {
+            // Check if the spot is taken
             if(piece != Pieces.None && gridArray[spot.x, spot.y] == Pieces.None)
             {
                 gridArray[spot.x, spot.y] = piece;
@@ -31,11 +33,13 @@ namespace TicTacToe
                 return true;
             }
 
+            // Return false if spot is taken
             return false;
         }
 
         private void testForEndGame()
         {
+            // Test for full grid
             bool full = true;
             for(int x = 0; x < 3 && full == true; x++)
             {
@@ -46,14 +50,14 @@ namespace TicTacToe
                 }
             }
 
+            // TODO: Test for win.
+
             if (full)
             {
                 result = "Stalemate";
                 playing = false;
                 return;
             }
-
-            // TODO: Test for win.
         }
 
         public override string ToString()

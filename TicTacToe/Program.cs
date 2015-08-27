@@ -14,6 +14,7 @@ namespace TicTacToe
 
             int x, y;
             
+            // Game loop
             while (grid.playing)
             {
                 // Show grid to players
@@ -39,6 +40,7 @@ namespace TicTacToe
                 }
             }
 
+            // Game is over when execution gets here
             Console.WriteLine("Game is over!");
             Console.WriteLine("Result: " + grid.result);
             Console.WriteLine(grid.ToString());
