@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TicTacToe
 {
@@ -8,25 +10,68 @@ namespace TicTacToe
     {
         private Pieces[,] gridArray = new Pieces[3, 3];
 
-        public bool   playing { get; private set; } = true;
-        public string result  { get; private set; } = "Playing";
+        public bool playing { get; private set; } = true;
+        public string result { get; private set; } = "Playing";
+
+        // List of array representations of each possible row-combination in the grid
+        private List<Pieces[]> allPossibleWins
+        {
+            get
+            {
+                var list = new List<Pieces[]>();
+                int x, y;
+                Pieces[] arr;
+
+                // Horizontal rows
+                for (x = 0; x < 3; x++)
+                {
+                    arr = new Pieces[3];
+                    for (y = 0; y < 3; y++)
+                        arr[y] = gridArray[x, y];
+                    list.Add(arr);
+                }
+
+                // Vertical columns
+                for (y = 0; y < 3; y++)
+                {
+                    arr = new Pieces[3];
+                    for (x = 0; x < 3; x++)
+                        arr[x] = gridArray[x, y];
+                    list.Add(arr);
+                }
+
+                // Diagonals
+                // Top-left to bottom-right
+                arr = new Pieces[3];
+                for (x = 0; x < 3; x++)
+                    arr[x] = gridArray[x, x];
+                list.Add(arr);
+
+                // Top-right to bottom-left
+                arr = new Pieces[3];
+                for (x = 2, y = 0; x >= 0 && y < 3; x--, y++)
+                {
+                    arr[y] = gridArray[x, y];
+                }
+                list.Add(arr);
+
+                return list;
+            }
+        }
+
 
         public Grid()
         {
             // Initialize gridArray
             for (int x = 0; x < 3; x++)
-            {
                 for (int y = 0; y < 3; y++)
-                {
                     gridArray[x, y] = Pieces.None;
-                }
-            }
         }
 
         public bool setSpot(Spot spot, Pieces piece)
         {
             // Check if the spot is taken
-            if(piece != Pieces.None && gridArray[spot.x, spot.y] == Pieces.None)
+            if (piece != Pieces.None && gridArray[spot.x, spot.y] == Pieces.None)
             {
                 gridArray[spot.x, spot.y] = piece;
                 testForEndGame();
@@ -39,25 +84,39 @@ namespace TicTacToe
 
         private void testForEndGame()
         {
-            // Test for full grid
+            // Is set to false in a loop to indicate possible stalemate
             bool full = true;
-            for(int x = 0; x < 3 && full == true; x++)
-            {
-                for(int y = 0; y < 3 && full == true; y++)
-                {
+            int x, y;
+
+            // Test for full grid
+            for (x = 0; x < 3 && full == true; x++)
+                for (y = 0; y < 3 && full == true; y++)
                     if (gridArray[x, y] == Pieces.None)
                         full = false;
+             
+            // Look for wins
+            foreach (var arr in allPossibleWins)
+            {
+                if (arr[0] != Pieces.None && Spot.LineEquals(arr))
+                {
+                    setResult(arr[0]);
+                    return;
                 }
             }
 
-            // TODO: Test for win.
-
             if (full)
             {
-                result = "Stalemate";
-                playing = false;
-                return;
+                setResult(Pieces.None);
             }
+        }
+
+        private void setResult(Pieces winner)
+        {
+            playing = false;
+            if (winner == Pieces.None)
+                result = "Stalemate";
+            else
+                result = (char)winner + " won";
         }
 
         public override string ToString()
@@ -73,21 +132,6 @@ namespace TicTacToe
             }
 
             return s;
-        }
-    }
-
-    public class Spot
-    {
-        public int x { get; }
-        public int y { get; }
-
-        public Spot(int x = 0, int y = 0)
-        {
-            if (x < 0 || x >= 3 || y < 0 || y >= 3)
-                throw new Exception("Oops.");
-
-            this.x = x;
-            this.y = y;
         }
     }
 }

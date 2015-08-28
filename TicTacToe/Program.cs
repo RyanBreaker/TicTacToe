@@ -22,7 +22,7 @@ namespace TicTacToe
 
                 // Get player move and check the input
                 input = Console.ReadLine().ToUpper();
-                if (input.Length != 3 || !Regex.IsMatch(input, "^([0-2]{2})(X|O)$"))
+                if (!(input.Length == 3 && Regex.IsMatch(input, "^([0-2]{2})(X|O)$")))
                 {
                     Console.WriteLine(TRYAGAIN);
                     continue;
@@ -32,7 +32,7 @@ namespace TicTacToe
                 x = int.Parse(input[0].ToString());
                 y = int.Parse(input[1].ToString());
 
-                // Set the spot
+                // Set the spot, returns false if spot is already set or given wrong input
                 if (!grid.setSpot(new Spot(x, y), (Pieces)input[2]))
                 {
                     Console.WriteLine(TRYAGAIN);
