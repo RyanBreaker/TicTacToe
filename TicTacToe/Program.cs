@@ -20,7 +20,7 @@ namespace TicTacToe
                 // Show grid to players
                 Console.WriteLine(grid.ToString());
 
-                // Get player move and check the input
+                // Get player move and check the input; see regex for current format
                 input = Console.ReadLine().ToUpper();
                 if (!(input.Length == 3 && Regex.IsMatch(input, "^([0-2]{2})(X|O)$")))
                 {
